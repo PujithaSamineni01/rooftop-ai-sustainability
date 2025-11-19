@@ -1,0 +1,513 @@
+/* ---------- Reset / base ---------- */
+:root {
+  --bg-grad-start: #f7fbf8;
+  --bg-grad-end: #f0f6f5;
+  --sidebar-bg: #071226;
+  --sidebar-contrast: #dff7e6;
+  --muted: #94a3b8;
+  --primary: #2e86de;
+  --primary-dark: #1b66b5;
+  --card-bg: #fff;
+  --card-shadow: 0 8px 28px rgba(15,23,42,0.06);
+}
+
+/* ---------- App layout ---------- */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bg-grad-start) 0%, var(--bg-grad-end) 100%);
+  transition: all 220ms ease;
+}
+
+/* ---------- Collapsible Sidebar ---------- */
+/* Increased width so long labels can wrap without cutting off */
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--sidebar-bg);
+  color: #fff;
+  width: 260px;            /* increased from 240 -> helps long labels */
+  min-width: 64px;
+  transition: width 220ms ease, padding 220ms ease, box-shadow 220ms ease;
+  box-shadow: 2px 0 10px rgba(2,6,23,0.08);
+  padding: 12px;
+  gap: 12px;
+  z-index: 40;
+}
+
+/* collapsed */
+.app-sidebar.collapsed {
+  width: 72px;
+  padding: 10px 8px;
+}
+
+/* top row with brand and toggle */
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--sidebar-contrast);
+}
+.brand-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* collapse toggle */
+.collapse-btn {
+  color: #cfe9ff;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --background: transparent;
+}
+
+/* nav menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+/* links */
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #b7c6d6;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  margin-right: 6px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/* hover behavior */
+.menu-link:hover {
+  background: rgba(255,255,255,0.02);
+  color: #e6f4ff;
+  transform: translateX(2px);
+}
+
+/* icon area */
+.menu-icon {
+  width: 28px;
+  text-align: center;
+  font-size: 20px;
+  color: #9fc9ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* label - allow wrapping and animated collapse */
+.menu-label {
+  display: inline-block;
+  flex: 1 1 auto;
+  max-width: 180px;       /* controls how and when it wraps */
+  white-space: normal;    /* allow wrapping (previously nowrap) */
+  line-height: 1.2;
+  font-weight: 600;
+  transition: opacity 180ms ease, transform 180ms ease, max-width 180ms ease;
+  overflow: hidden;
+}
+
+/* collapsed state: animate label out (no abrupt layout jumps) */
+.app-sidebar.collapsed .menu-label {
+  opacity: 0;
+  transform: translateX(-6px);
+  max-width: 0;
+  pointer-events: none;
+}
+
+/* active link */
+.menu-link--active {
+  background: linear-gradient(90deg, rgba(46,134,222,0.12), rgba(46,134,222,0.06));
+  color: #e8f6ff;
+  box-shadow: inset 0 0 0 1px rgba(46,134,222,0.06);
+}
+
+/* footer at bottom */
+.sidebar-footer {
+  margin-top: auto;
+  font-size: 12px;
+  color: #7da8c9;
+  text-align: center;
+}
+.app-sidebar.collapsed .sidebar-footer {
+  display: none;
+}
+
+/* ---------- Main area ---------- */
+.app-main {
+  flex: 1;
+  padding: 18px;
+  transition: margin-left 220ms ease;
+}
+
+/* page card */
+.page-card {
+  max-width: 900px;
+  margin: 20px auto;
+  background: var(--card-bg);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+}
+
+/* ---------- Responsive: sidebar becomes horizontal on small screens ---------- */
+@media (max-width: 900px) {
+  .app-shell {
+    flex-direction: column;
+  }
+  .app-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+  }
+  .app-sidebar.collapsed {
+    width: 100%;
+  }
+  .menu {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .menu-link { padding: 8px; gap: 6px; }
+  .menu-label { display: none !important; } /* keep icons compact on mobile */
+  .app-main { padding: 12px; }
+}
+
+/* ---------- Remove legacy button overrides (prevents double boxes) ---------- */
+.btn-solid,
+.button-solid {
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ---------- UploadForm / camera styles ---------- */
+.upload-form { width: 100%; }
+.uploader-left { display:flex; justify-content:center; align-items:flex-start; padding: 8px; }
+.camera-area { width: 100%; max-width: 520px; }
+.preview-wrap { position: relative; border-radius: 10px; overflow: hidden; background: #f7fafb; min-height: 220px; display:flex; align-items:center; justify-content:center; }
+.preview-placeholder { text-align:center; color:#9aa7b2; padding:24px; }
+.preview-img { width:100%; height:220px; object-fit:cover; display:block; }
+.btn-remove { position:absolute; top:10px; right:10px; background: rgba(255,255,255,0.9); border-radius:8px; padding:6px 8px; border:none; cursor:pointer; display:flex; gap:6px; align-items:center; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+.camera-controls { display:flex; gap:10px; margin-top:10px; align-items:center; }
+.camera-video { width:100%; height:260px; background:#000; border-radius:8px; object-fit:cover; }
+
+/* right column */
+.uploader-right { padding:8px 12px; display:flex; flex-direction:column; gap:8px; }
+.item-no-border { --background: transparent; border-radius:8px; padding:6px 0; }
+
+/* uploader buttons: let Ionic handle visuals, our CSS only positions */
+.camera-actions { display:flex; gap:8px; }
+.file-chooser { display:inline-block; cursor: pointer; }
+
+/* result box */
+.analysis-result { margin-top: 14px; background:#fbfdff; border:1px solid #eef6ff; padding:12px; border-radius:8px; }
+.result-pre { white-space: pre-wrap; font-size:12px; color:#0f1724; background:transparent; padding:0; margin:0; }
+
+/* responsive adjustments */
+@media (max-width: 900px) {
+  .camera-video, .preview-img { height: 200px; }
+  .preview-wrap { min-height: 200px; }
+  .uploader-right { padding: 6px; }
+}
+
+/* ---------- Small utilities ---------- */
+.small-muted { color: #9aa7b2; font-size: 13px; }
+.preview-placeholder ion-icon { font-size: 36px; color: #9aa7b2; }
+
+/* Ensure IonIcon inherits color */
+.menu-link ion-icon { color: inherit; font-size: 20px; }
+
+/* tiny polish for form controls inside IonItem when showing stacked labels */
+.item-no-border ion-input,
+.item-no-border ion-select {
+  --padding-start: 0;
+}
+
+/* keep focus outlines subtle */
+.menu-link:focus {
+  outline: 2px solid rgba(46,134,222,0.12);
+  outline-offset: 2px;
+}
+
+/* ---------- Extra: minor polish for long labels when expanded ---------- */
+.menu-label { font-size: 14px; }
+.menu-link .menu-label { word-break: break-word; }
+
+
+/* --- Recommendations cards --- */
+.rec-card {
+  background: #fbfdff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 1px solid #eef6ff;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rec-card + .rec-card {
+  margin-top: 10px;
+}
+
+.rec-card-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin: 0;
+  color: #0f1724;
+}
+
+.rec-tag {
+  align-self: flex-start;
+  background: rgba(46, 134, 222, 0.16);
+  color: #0f3460;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.rec-body {
+  flex: 1;
+  color: #334155;
+  font-size: 14px;
+}
+
+.rec-notes {
+  margin-bottom: 6px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.rec-meta {
+  color: #475569;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* --- Savings right widget --- */
+.savings-widget {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #eef6ff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+}
+
+.savings-header {
+  margin-bottom: 16px;
+}
+
+.savings-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.savings-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 8px;
+  border-radius: 8px;
+  background: #f9fcff;
+  margin-bottom: 10px;
+  align-items: center;
+  border: 1px solid #eef6ff;
+}
+
+.savings-label {
+  color: #475569;
+  font-size: 13px;
+}
+
+.savings-value {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0f1724;
+}
+
+.savings-divider {
+  height: 1px;
+  background: #eef6ff;
+  margin: 12px 0;
+  border-radius: 2px;
+}
+
+.savings-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.small-cta {
+  margin-top: 12px;
+  width: 100%;
+  background: rgba(46, 134, 222, 0.1);
+  border: 1px solid rgba(46, 134, 222, 0.18);
+  color: var(--primary);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+
+.small-cta:hover {
+  background: rgba(46, 134, 222, 0.18);
+}
+
+/* --- Layout responsiveness --- */
+.recommendations-page {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .recommendations-page {
+    flex-direction: column;
+  }
+
+  .savings-widget {
+    width: 100% !important;
+  }
+}
+
+/* Recommendations page */
+.rec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.muted { color: #6b7280; }
+.small { font-size: 13px; }
+
+.rec-summary-block {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+.rec-summary-values {
+  text-align:right;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.04);
+}
+.rec-summary-label { font-size: 12px; color:#94a3b8; }
+.rec-summary-kwh { font-weight:700; font-size:16px; color:#0f1724; }
+.rec-summary-co2 { font-size:13px; color:#475569; }
+
+/* Rec card */
+.rec-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(15,23,42,0.04);
+  border: 1px solid rgba(14,39,77,0.04);
+  padding: 12px;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.rec-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(15,23,42,0.06); }
+
+.rec-card-header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+.rec-card-title { margin:0; font-size:16px; font-weight:700; color:#0f1724; }
+.rec-card-sub { margin-top:6px; color:#475569; font-size:13px; }
+.rec-card-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+
+/* badge & meta */
+.rec-badge {
+  background: rgba(46,134,222,0.12);
+  color: #0f66c2;
+  padding: 6px 8px;
+  border-radius: 999px;
+  font-weight:700;
+  font-size:12px;
+  border: 1px solid rgba(46,134,222,0.14);
+}
+
+.rec-card-meta { text-align:right; font-size:12px; color:#6b7280; }
+.meta-values { margin-top:6px; display:flex; gap:8px; align-items:center; }
+.meta-kwh { font-weight:700; color:#0f1724; }
+.meta-co2 { color:#475569; font-size:13px; }
+
+/* view button */
+.btn-view {
+  background: transparent;
+  border: 1px solid rgba(14,39,77,0.06);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight:700;
+  color: #0f66c2;
+}
+
+/* card body */
+.rec-card-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eef6ff; }
+.interventions-list { display:grid; gap:10px; }
+.intervention { background:#fbfdff; border:1px solid #eef6ff; border-radius:8px; padding:10px; }
+.intervention-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.intervention-details { margin-top:8px; display:flex; gap:12px; flex-wrap:wrap; color:#475569; }
+
+/* user recs */
+.user-rec-grid { display:grid; gap:10px; margin-top:8px; }
+.user-rec { background:#fff; border:1px solid #eef6ff; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:6px; }
+
+/* impact widget */
+.savings-widget {
+  background:#fff;
+  border-radius:12px;
+  padding:14px;
+  box-shadow: 0 8px 28px rgba(15,23,42,0.04);
+  border:1px solid rgba(14,39,77,0.03);
+}
+.savings-header { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.impact-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #f1f5f9; }
+.impact-label { color:#475569; font-size:13px; }
+.impact-value { font-weight:700; color:#0f1724; }
+
+/* divider */
+.savings-divider { height: 10px; }
+
+/* small CTA */
+.small-cta {
+  background: #2e86de;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight:700;
+}
+
+/* empty card */
+.empty-card { background:#fff; border:1px solid #eef6ff; border-radius:8px; padding:14px; color:#475569; }
+
+/* responsive */
+@media (max-width: 900px) {
+  .rec-header { flex-direction: column; align-items:flex-start; gap:12px; }
+  .rec-summary-block { align-items:flex-start; }
+  .rec-card-right { align-items:flex-start; }
+}

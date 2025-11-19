@@ -1,0 +1,137 @@
+{
+  "roof_id": "197f36a2-224b-42ee-98de-7965b274e2d3",
+  "cv_usable_area_m2": 45,
+  "system_generated_flavors": [
+    {
+      "flavor": "solar_first",
+      "summary": "Maximise on-site solar generation to displace grid electricity",
+      "interventions": [
+        {
+          "title": "Install rooftop PV array",
+          "description": "Maximise solar generation using high-efficiency panels covering usable rooftop area.",
+          "est_energy_kwh_per_year": 9978.2,
+          "est_co2_kg_per_year": 6984.7,
+          "details": {
+            "capacity_kw": 6.075,
+            "panels_est": 19,
+            "usable_area_m2": 33.75
+          }
+        },
+        {
+          "title": "Add battery storage (optional)",
+          "description": "Store daytime solar for evening use to increase self-consumption and reduce grid draw.",
+          "est_energy_kwh_per_year": 730,
+          "est_co2_kg_per_year": 511,
+          "details": {
+            "battery_kwh": 10
+          }
+        }
+      ],
+      "total_est_annual_kwh": 10708.2,
+      "total_est_annual_co2_kg": 7495.7,
+      "confidence": "high"
+    },
+    {
+      "flavor": "green_roof",
+      "summary": "Reduce building cooling loads and increase rooftop insulation with vegetative cover",
+      "interventions": [
+        {
+          "title": "Install intensive/extensive green roof",
+          "description": "Use vegetation layers to reduce heat gain, improve insulation and biodiversity.",
+          "est_energy_kwh_per_year": 270,
+          "est_co2_kg_per_year": 189,
+          "details": {
+            "cooling_savings_pct": 0.12,
+            "baseline_elec_kwh": 2250
+          }
+        }
+      ],
+      "total_est_annual_kwh": 270,
+      "total_est_annual_co2_kg": 189,
+      "confidence": "medium"
+    },
+    {
+      "flavor": "cool_roof",
+      "summary": "Use reflective roof coatings/materials to reduce cooling demand",
+      "interventions": [
+        {
+          "title": "Apply high-reflectance cool roof coating",
+          "description": "Reflective coating reduces roof surface temperature and cooling demand.",
+          "est_energy_kwh_per_year": 180,
+          "est_co2_kg_per_year": 126,
+          "details": {
+            "savings_pct": 0.08
+          }
+        }
+      ],
+      "total_est_annual_kwh": 180,
+      "total_est_annual_co2_kg": 126,
+      "confidence": "medium"
+    },
+    {
+      "flavor": "insulation_efficiency",
+      "summary": "Improve roof insulation and upgrade to efficient appliances/lighting",
+      "interventions": [
+        {
+          "title": "Improve insulation & efficiency",
+          "description": "Add insulation layers, seal gaps, switch to LEDs and efficient HVAC controls.",
+          "est_energy_kwh_per_year": 337.5,
+          "est_co2_kg_per_year": 236.2,
+          "details": {
+            "savings_pct": 0.15
+          }
+        }
+      ],
+      "total_est_annual_kwh": 337.5,
+      "total_est_annual_co2_kg": 236.2,
+      "confidence": "high"
+    },
+    {
+      "flavor": "hybrid",
+      "summary": "Blend of PV, green roof and storage for resilience and carbon reduction",
+      "interventions": [
+        {
+          "title": "Moderate PV array (50% coverage)",
+          "description": "Balance area for PV and green roof."
+        },
+        {
+          "title": "Green roof zones",
+          "description": "Designate sections of roof for intensive planting."
+        },
+        {
+          "title": "Small battery for peak shaving",
+          "description": "Enable grid independence during evening peaks."
+        }
+      ],
+      "total_est_annual_kwh": 8728.6,
+      "total_est_annual_co2_kg": 6110,
+      "confidence": "medium"
+    }
+  ],
+  "user_recommendations": [
+    {
+      "name": "Pollinator Garden",
+      "category": "ecology",
+      "description": "Attracts butterflies, bees, increases biodiversity.",
+      "estimated_cost": "$500–$2000"
+    },
+    {
+      "name": "Solar Panels",
+      "category": "energy",
+      "description": "Generates clean energy and cools the roof surface.",
+      "estimated_cost": "$2000–$8000"
+    }
+  ],
+  "impact": {
+    "air_quality_score": 0.2,
+    "biodiversity_gain": 0.5,
+    "energy_savings_kwh": 1500,
+    "stormwater_reduction_liters": 0
+  },
+  "assumptions": {
+    "sun_hours_source": "high",
+    "usable_area_m2": 45,
+    "rainfall_factor": 1,
+    "emissions_factor": 0.7
+  }
+}
