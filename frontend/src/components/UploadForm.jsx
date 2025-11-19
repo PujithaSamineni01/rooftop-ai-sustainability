@@ -35,15 +35,13 @@ export default function UploadForm() {
   const [lon, setLon] = useState("");
 
   // NEW FIELDS
-  const [roofMaterial, setRoofMaterial] = useState("concrete");
+  const [roofType, setRoofType] = useState("concrete");
   const [roofSlope, setRoofSlope] = useState("flat");
   const [accessibility, setAccessibility] = useState("stairs");
+  const [shared, setShared] = useState(false);
 
   // Obstacles
-  const [hasObstacles, setHasObstacles] = useState(false);
-  const [obstacleMode, setObstacleMode] = useState("count");
-  const [obstacleCount, setObstacleCount] = useState(0);
-  const [obstacleArea, setObstacleArea] = useState(0);
+  const [obstacles, setObstacles] = useState("");
 
   // Loading state
   const [loading, setLoading] = useState(false);
@@ -53,7 +51,7 @@ export default function UploadForm() {
   const streamRef = useRef(null);
   const [cameraOpen, setCameraOpen] = useState(false);
 
-  const backend = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+  const backend = import.meta.env.VITE_BACKEND_URL || "http://localhost:8001";
 
   useEffect(() => {
     return () => {
@@ -163,8 +161,24 @@ export default function UploadForm() {
   // -------- SUBMIT --------
   const onSubmit = async (e) => {
     e.preventDefault();
+    // Validation
     if (!photoFile) {
       alert("Please choose or capture a rooftop image.");
+      return;
+    }
+    if (!roofType) {
+      alert("Please select a roof type.");
+      return;
+    }
+    if (!area || isNaN(Number(area)) || Number(area) <= 0) {
+      alert("Please enter a valid area in sqm.");
+      return;
+    }
+
+    // Convert area from sqm to sqft (1 sqm = 10.7639 sqft)
+    const areaSqft = Number(area) * 10.7639;
+    if (!areaSqft || isNaN(areaSqft) || areaSqft <= 0) {
+      alert("Area conversion failed. Please check your input.");
       return;
     }
 
@@ -172,27 +186,39 @@ export default function UploadForm() {
 
     try {
       const fd = new FormData();
-      fd.append("photo", photoFile);
-      fd.append("location", location);
-      fd.append("approximate_area_sqm", area);
-      fd.append("latitude", lat);
-      fd.append("longitude", lon);
-
-      fd.append("roof_material", roofMaterial);
-      fd.append("roof_slope", roofSlope);
-      fd.append("accessibility", accessibility);
-      fd.append("has_obstacles", hasObstacles ? "true" : "false");
-
-      if (hasObstacles) {
-        fd.append("obstacle_mode", obstacleMode);
-        if (obstacleMode === "count") {
-          fd.append("obstacle_count", obstacleCount);
-        } else {
-          fd.append("obstacle_area_sqm", obstacleArea);
-        }
+      fd.append("imagefile", photoFile);
+      fd.append("size_sqft", String(areaSqft));
+      fd.append("roof_type", roofType);
+      fd.append("shared", shared ? "true" : "false");
+      // Map roofSlope string to float value
+      let roofSlopeValue = "";
+      switch (roofSlope) {
+        case "flat":
+          roofSlopeValue = "0";
+          break;
+        case "low":
+          roofSlopeValue = "10";
+          break;
+        case "moderate":
+          roofSlopeValue = "22.5";
+          break;
+        case "steep":
+          roofSlopeValue = "35";
+          break;
+        case "unknown":
+        default:
+          roofSlopeValue = "";
       }
+      fd.append("roof_slope", roofSlopeValue);
+      fd.append("roof_scope", "");
+      fd.append("accessibility", accessibility || "unknown");
+      fd.append("obstacles", obstacles);
+      // latitude and longitude: only send if valid
+      if (lat && !isNaN(Number(lat))) fd.append("latitude", String(lat));
+      if (lon && !isNaN(Number(lon))) fd.append("longitude", String(lon));
 
-      await axios.post(`${backend}/analyze`, fd, {
+      // POST to /v1/metadata
+      await axios.post(`${backend}/v1/metadata`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -200,7 +226,7 @@ export default function UploadForm() {
       history.push("/recommendations");
     } catch (err) {
       console.error(err);
-      alert("Analysis failed.");
+      alert("Analysis failed. Please check your inputs and try again.");
     } finally {
       setLoading(false);
     }
@@ -301,10 +327,10 @@ export default function UploadForm() {
                   <IonInput value={location} onIonChange={(e) => setLocation(e.detail.value)} />
                 </IonItem>
 
-                {/* Roof Material */}
+                {/* Roof Type */}
                 <IonItem lines="none" className="item-no-border">
-                  <IonLabel position="stacked">Roof material</IonLabel>
-                  <IonSelect value={roofMaterial} onIonChange={(e) => setRoofMaterial(e.detail.value)}>
+                  <IonLabel position="stacked">Roof type</IonLabel>
+                  <IonSelect value={roofType} onIonChange={(e) => setRoofType(e.detail.value)}>
                     <IonSelectOption value="concrete">Concrete</IonSelectOption>
                     <IonSelectOption value="metal">Metal sheets</IonSelectOption>
                     <IonSelectOption value="tiles">Tiles</IonSelectOption>
@@ -346,36 +372,17 @@ export default function UploadForm() {
                   </IonSelect>
                 </IonItem>
 
-                {/* Obstacles toggle */}
+                {/* Shared toggle */}
                 <IonItem lines="none" className="item-no-border" style={{ alignItems: "center", display: "flex" }}>
-                  <IonLabel>Obstacles on rooftop?</IonLabel>
-                  <IonToggle checked={hasObstacles} onIonChange={(e) => setHasObstacles(e.detail.checked)} />
+                  <IonLabel>Is the roof shared?</IonLabel>
+                  <IonToggle checked={shared} onIonChange={(e) => setShared(e.detail.checked)} />
                 </IonItem>
 
-                {/* Obstacle modes */}
-                {hasObstacles && (
-                  <>
-                    <IonItem lines="none" className="item-no-border">
-                      <IonLabel position="stacked">Obstacle input mode</IonLabel>
-                      <IonSelect value={obstacleMode} onIonChange={(e) => setObstacleMode(e.detail.value)}>
-                        <IonSelectOption value="count">Number of obstacles</IonSelectOption>
-                        <IonSelectOption value="area">Area covered by obstacles (sqm)</IonSelectOption>
-                      </IonSelect>
-                    </IonItem>
-
-                    {obstacleMode === "count" ? (
-                      <IonItem lines="none" className="item-no-border">
-                        <IonLabel position="stacked">Number of obstacles</IonLabel>
-                        <IonInput type="number" min="0" value={obstacleCount} onIonChange={(e) => setObstacleCount(e.detail.value)} />
-                      </IonItem>
-                    ) : (
-                      <IonItem lines="none" className="item-no-border">
-                        <IonLabel position="stacked">Obstacle area (sqm)</IonLabel>
-                        <IonInput type="number" min="0" value={obstacleArea} onIonChange={(e) => setObstacleArea(e.detail.value)} />
-                      </IonItem>
-                    )}
-                  </>
-                )}
+                {/* Obstacles input */}
+                <IonItem lines="none" className="item-no-border">
+                  <IonLabel position="stacked">Obstacles (comma separated)</IonLabel>
+                  <IonInput value={obstacles} onIonChange={(e) => setObstacles(e.detail.value)} placeholder="e.g. water tank, skylight" />
+                </IonItem>
 
                 {/* BUTTONS */}
                 <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
